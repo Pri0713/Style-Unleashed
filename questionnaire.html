@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>StyleAI Questionnaire</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#e9dfd3;
+color:#3b1f1f;
+}
+
+header{
+background:#7a1f2a;
+color:white;
+padding:18px 40px;
+font-size:22px;
+font-weight:bold;
+}
+
+.container{
+display:flex;
+justify-content:center;
+align-items:center;
+height:90vh;
+}
+
+.card{
+background:#f5eee6;
+padding:50px;
+border-radius:12px;
+width:550px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+.question{
+font-size:24px;
+margin-bottom:40px;
+}
+
+.options{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.option{
+background:#7a1f2a;
+color:white;
+padding:14px;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.option:hover{
+background:#d37b2a;
+}
+
+.option.selected{
+background:#d37b2a;
+}
+
+.nav{
+margin-top:40px;
+display:flex;
+justify-content:space-between;
+}
+
+.arrow{
+background:#7a1f2a;
+color:white;
+border:none;
+padding:12px 20px;
+font-size:20px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.arrow:hover{
+background:#d37b2a;
+}
+
+.progress{
+height:6px;
+background:#e0d5c6;
+margin-bottom:30px;
+border-radius:5px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+background:#7a1f2a;
+width:0%;
+transition:0.3s;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+StyleAI
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="question" id="questionText"></div>
+
+<div class="options" id="optionsContainer"></div>
+
+<div class="nav">
+
+<button class="arrow" id="prevBtn">←</button>
+<button class="arrow" id="nextBtn">→</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+id:"gender",
+text:"What is your gender?",
+options:["female","male"]
+},
+
+{
+id:"bodyType",
+text:"What is your body type?",
+options:["rectangle","pear","apple","hourglass","oval","trapezoid"]
+},
+
+{
+id:"skinTone",
+text:"What is your skin tone?",
+options:["fair","medium","dusky","dark"]
+},
+
+{
+id:"height",
+text:"What is your height category?",
+options:["short","average","tall"]
+},
+
+{
+id:"stylePreference",
+text:"What style do you prefer?",
+options:["minimal","bold","traditional","trendy"]
+},
+
+{
+id:"occasion",
+text:"What is the occasion?",
+options:["casual","formal","ethnic","party"]
+},
+
+{
+id:"season",
+text:"What season is it?",
+options:["summer","winter","monsoon","festive"]
+}
+
+]
+
+let currentQuestion = 0
+const answers = {}
+
+const questionText = document.getElementById("questionText")
+const optionsContainer = document.getElementById("optionsContainer")
+const progressBar = document.getElementById("progressBar")
+
+function renderQuestion(){
+
+const q = questions[currentQuestion]
+
+questionText.textContent = q.text
+
+optionsContainer.innerHTML=""
+
+q.options.forEach(option=>{
+
+const div = document.createElement("div")
+div.className="option"
+div.textContent=option
+
+if(answers[q.id]===option){
+div.classList.add("selected")
+}
+
+div.onclick=()=>{
+
+answers[q.id]=option
+
+document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"))
+
+div.classList.add("selected")
+
+}
+
+optionsContainer.appendChild(div)
+
+})
+
+progressBar.style.width=((currentQuestion+1)/questions.length*100)+"%"
+
+}
+
+document.getElementById("nextBtn").onclick=async ()=>{
+
+const q = questions[currentQuestion]
+
+if(!answers[q.id]){
+alert("Please select an option")
+return
+}
+
+if(currentQuestion < questions.length-1){
+
+currentQuestion++
+renderQuestion()
+
+}else{
+
+await submitAnswers()
+
+}
+
+}
+
+document.getElementById("prevBtn").onclick=()=>{
+
+if(currentQuestion>0){
+
+currentQuestion--
+renderQuestion()
+
+}
+
+}
+
+async function submitAnswers(){
+
+await fetch("/api/preferences",{
+
+method:"PUT",
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+
+gender:answers.gender,
+bodyType:answers.bodyType,
+skinTone:answers.skinTone,
+height:answers.height,
+stylePreference:answers.stylePreference
+
+})
+
+})
+
+const res = await fetch("/api/recommendations",{
+
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+
+occasion:answers.occasion,
+season:answers.season
+
+})
+
+})
+
+const data = await res.json()
+
+localStorage.setItem("recommendation",JSON.stringify(data.recommendation))
+
+window.location.href="recommendation.html"
+
+}
+
+renderQuestion()
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Your Outfit Recommendation</title>
+
+<link rel="stylesheet" href="theme.css">
+
+<style>
+
+.hero{
+text-align:center;
+margin-bottom:30px;
+}
+
+.hero img{
+width:320px;
+border-radius:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.rec-card{
+background:white;
+padding:20px;
+border-radius:8px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,0.07);
+}
+
+.rec-card img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:6px;
+margin-bottom:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+<div class="logo">StyleAI</div>
+
+<a class="nav-btn" href="questionnaire.html">New Recommendation</a>
+
+</div>
+
+<div class="container">
+
+<div class="hero">
+
+<h2>Your Personalized Look</h2>
+
+<img id="heroImage">
+
+</div>
+
+<div class="grid">
+
+<div class="rec-card">
+
+<img src="https://images.unsplash.com/photo-1520975922284-6c2b92c4a8b3">
+<p>Recommended Outfit</p>
+
+</div>
+
+<div class="rec-card">
+
+<img src="https://images.unsplash.com/photo-1526178613658-3f1622045557">
+<p>Accessories</p>
+
+</div>
+
+<div class="rec-card">
+
+<img src="https://images.unsplash.com/photo-1520974735194-1c7e78d5bb8d">
+<p>Color Palette</p>
+
+</div>
+
+<div class="rec-card">
+
+<img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
+<p>Fabric Suggestions</p>
+
+</div>
+
+<div class="rec-card">
+
+<img src="https://images.unsplash.com/photo-1519741497674-611481863552">
+<p>Styling Tip</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="recommendation.js"></script>
+
+<script>
+
+fetch("/api/recommendations/history")
+.then(res=>res.json())
+.then(data=>{
+
+const hero=data.history[0].recommendation.heroImage
+
+document.getElementById("heroImage").src=hero
+
+})
+
+</script>
+
+</body>
+</html>

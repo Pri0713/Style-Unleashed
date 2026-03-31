@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Login | StyleAI</title>
+
+<link rel="stylesheet" href="theme.css">
+
+<style>
+
+.auth-wrapper{
+display:grid;
+grid-template-columns:1fr 1fr;
+height:100vh;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+.auth-image{
+background:url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d")
+center/cover no-repeat;
+}
+
+.auth-box{
+display:flex;
+align-items:center;
+justify-content:center;
+background:#faf7f4;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+width:350px;
+}
+
+.tabs{
+display:flex;
+margin-bottom:25px;
+border-bottom:1px solid #ddd;
+}
+
+.tab{
+flex:1;
+padding:10px;
+text-align:center;
+cursor:pointer;
+border-bottom:3px solid transparent;
+font-weight:500;
+}
+
+.tab.active{
+border-color:#7a1f2a;
+color:#7a1f2a;
+font-weight:bold;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+font-size:14px;
+}
+
+input{
+width:100%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:5px;
+}
+
+.btn{
+margin-top:20px;
+width:100%;
+padding:12px;
+border:none;
+background:#7a1f2a;
+color:white;
+border-radius:5px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btn:hover{
+background:#5e1620;
+}
+
+.hidden{
+display:none;
+}
+
+#authMessage{
+margin-top:15px;
+font-size:14px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+
+<div class="auth-image"></div>
+
+<div class="auth-box">
+
+<div class="card">
+
+<h2 style="margin-bottom:20px">Welcome to StyleAI</h2>
+
+<div class="tabs">
+<div id="tabLogin" class="tab active">Login</div>
+<div id="tabRegister" class="tab">Register</div>
+</div>
+
+<!-- LOGIN FORM -->
+
+<form id="loginForm">
+
+<label>Email</label>
+<input id="loginEmail" type="email" required>
+
+<label>Password</label>
+<input id="loginPassword" type="password" required>
+
+<button class="btn">Login</button>
+
+</form>
+
+<!-- REGISTER FORM -->
+
+<form id="registerForm" class="hidden">
+
+<label>Name</label>
+<input id="registerName" required>
+
+<label>Email</label>
+<input id="registerEmail" type="email" required>
+
+<label>Password</label>
+<input id="registerPassword" type="password" required>
+
+<button class="btn">Register</button>
+
+</form>
+
+<div id="authMessage"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="auth.js"></script>
+
+</body>
+</html>
