@@ -1,3 +1,60 @@
+/**
+ * Image naming convention:
+ * {occasion}{skintone}{style}{gender}{number}
+ * occasion: casual, formal, party, ethnic, sports
+ * skintone: fair, dusky, dark
+ * style: minimal, trad, trendy
+ * gender: m, f
+ * number: 1, 2
+ *
+ * Example: casualduskytradm1.jpg
+ */
+
+function mapSkinTone(skinTone) {
+  const s = (skinTone || "").toLowerCase();
+  if (s === "fair") return "fair";
+  if (s === "medium" || s === "olive") return "dusky";
+  if (s === "dark") return "dark";
+  return "dusky";
+}
+
+function mapStyle(stylePreference) {
+  const s = (stylePreference || "").toLowerCase();
+  if (s === "minimal") return "minimal";
+  if (s === "classic" || s === "ethnic" || s.includes("trad")) return "trad";
+  if (s === "trendy" || s === "streetwear") return "trendy";
+  return "minimal";
+}
+
+function mapGender(gender) {
+  const g = (gender || "").toLowerCase();
+  if (g === "male" || g === "m") return "m";
+  if (g === "female" || g === "f") return "w";
+  return "m";
+}
+
+function mapOccasion(occasion) {
+  const o = (occasion || "").toLowerCase();
+  if (o === "formal") return "formal";
+  if (o === "party") return "party";
+  if (o === "ethnic") return "ethnic";
+  if (o === "sports") return "sports";
+  return "casual";
+}
+
+function getOutfitImages(input) {
+  const { occasion, skinTone, stylePreference, gender } = input;
+
+  const occ = mapOccasion(occasion);
+  const skin = mapSkinTone(skinTone);
+  const style = mapStyle(stylePreference);
+  const gen = mapGender(gender);
+
+  const img1 = `assets/outfits/${occ}${skin}${style}${gen}1.jpg`;
+  const img2 = `assets/outfits/${occ}${skin}${style}${gen}2.jpg`;
+  return [img1, img2];
+}
+
 function unique(list) {
   return [...new Set(list)];
 }
@@ -7,190 +64,120 @@ function buildRecommendation(input) {
     gender,
     bodyType,
     occasion,
-    season,
     skinTone,
     height,
     stylePreference,
   } = input;
 
-  const outfit = [];
+  const outfitItems = [];
   const accessories = [];
-  const colors = [];
   const fabrics = [];
-  const tips = [];
+  const colors = [];
+  const stylingTips = [];
 
-  let heroImage =
-    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80";
+  /* ── BODY TYPE ── */
+  const bt = (bodyType || "").toLowerCase();
 
-  // 1️⃣ Occasion rules (highest priority)
-  switch (occasion) {
-    case "casual":
-      outfit.push("Denim and breathable t-shirt combination");
-      outfit.push("Pastel top with clean-cut bottoms");
-      accessories.push("Sneakers", "Watch", "Sling bag");
-      heroImage =
-        "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80";
-      break;
-
-    case "formal":
-      if (gender === "female")
-        outfit.push("Structured saree or elegant suit set");
-      else
-        outfit.push("Tailored blazer with formal shirt and trousers");
-
-      accessories.push("Leather shoes", "Tie", "Stud earrings");
-
-      heroImage =
-        "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=900&q=80";
-      break;
-
-    case "ethnic":
-      outfit.push("Kurta / lehenga / saree inspired look");
-      accessories.push("Bangles", "Jhumkas", "Dupatta styling");
-
-      heroImage =
-        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80";
-      break;
-
-    case "party":
-      outfit.push("Gown or statement party outfit");
-      outfit.push("Sequin/silk evening styling");
-      accessories.push("Heels", "Clutch", "Statement jewelry");
-
-      heroImage =
-        "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80";
-      break;
-
-    case "festive":
-      outfit.push("Traditional festive attire such as lehenga or kurta set");
-      accessories.push("Statement earrings", "Bangles", "Ethnic footwear");
-
-      heroImage =
-        "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=900&q=80";
-      break;
-
-    default:
-      outfit.push("Balanced smart-casual outfit");
+  if (bt === "pear") {
+    outfitItems.push("A-line dress", "Structured blazer", "Boot-cut trousers");
+    stylingTips.push("Highlight your upper body to balance proportions");
+  } else if (bt === "apple") {
+    outfitItems.push("Empire waist dress", "V-neck top", "Wrap blouse");
+    stylingTips.push("Choose flowy fabrics that skim the midsection");
+  } else if (bt === "rectangle") {
+    outfitItems.push("Peplum top", "Layered outfits", "Belted dresses");
+    stylingTips.push("Add visual curves with belts and layered styling");
+  } else if (bt === "hourglass") {
+    outfitItems.push("Wrap dress", "High-waist pants", "Fitted midi skirt");
+    stylingTips.push("Celebrate your natural waistline with fitted silhouettes");
+  } else if (bt === "oval") {
+    outfitItems.push("Straight-leg trousers", "Longline jacket");
+    stylingTips.push("Vertical lines and monochrome looks create a streamlined effect");
+  } else if (bt === "trapezoid") {
+    outfitItems.push("Slim-fit shirt", "Dark trousers");
+    stylingTips.push("Keep it simple and well-fitted on top");
   }
 
-  // 2️⃣ Body type rules
-  if (["rectangle", "trapezoid"].includes(bodyType)) {
-    fabrics.push("Denim", "Tweed", "Corduroy");
-    tips.push("Use checks or layered styling to add structure.");
+  /* ── OCCASION ── */
+  const occ = (occasion || "").toLowerCase();
+
+  if (occ === "formal") {
+    outfitItems.push("Tailored blazer", "Formal trousers / pencil skirt");
+    accessories.push("Classic watch", "Minimal gold jewelry", "Leather belt");
+    stylingTips.push("Stick to a two-colour palette for a polished look");
+  } else if (occ === "casual") {
+    outfitItems.push("Well-fitted jeans", "Relaxed linen shirt / tee");
+    accessories.push("White sneakers", "Canvas tote bag");
+    stylingTips.push("Comfort is key — opt for breathable, relaxed fits");
+  } else if (occ === "ethnic") {
+    outfitItems.push("Embroidered kurta", "Anarkali / sherwani");
+    accessories.push("Ethnic jhumkas / mojris", "Silk dupatta / pocket square");
+    stylingTips.push("Pair rich fabrics with handcrafted accessories");
+  } else if (occ === "party") {
+    outfitItems.push("Statement blouse / fitted blazer", "Sequin or satin accents");
+    accessories.push("Bold earrings / statement watch", "Clutch bag");
+    stylingTips.push("One bold piece is enough — let it be the hero");
+  } else if (occ === "sports") {
+    outfitItems.push("Moisture-wicking tee", "Stretch joggers / leggings");
+    accessories.push("Sports shoes", "Sweat-resistant cap");
+    stylingTips.push("Prioritise functional fabrics over fashion");
   }
 
-  if (["oval", "apple"].includes(bodyType)) {
-    fabrics.push("Linen", "Cotton", "Silk");
-    tips.push("Vertical stripes help create a longer silhouette.");
+  /* ── SKIN TONE → COLOURS ── */
+  const skin = (skinTone || "").toLowerCase();
+
+  if (skin === "fair") {
+    colors.push("Pastels", "Baby Blue", "Blush Pink", "Lavender", "Soft Mint");
+  } else if (skin === "medium" || skin === "olive") {
+    colors.push("Terracotta", "Olive Green", "Warm Mustard", "Rust", "Camel");
+  } else if (skin === "dark") {
+    colors.push("Cobalt Blue", "Emerald", "Bright White", "Burnt Orange", "Deep Plum");
+  } else {
+    colors.push("Beige", "Soft Pink", "Teal", "Ivory");
   }
 
-  if (bodyType === "pear") {
-    tips.push("Add visual interest to the upper body to balance proportions.");
+  /* ── HEIGHT ── */
+  const h = (height || "").toLowerCase();
+
+  if (h === "short") {
+    stylingTips.push("High-waisted bottoms and vertical stripes add visual height");
+    outfitItems.push("Cropped jacket");
+  } else if (h === "tall") {
+    stylingTips.push("You can pull off maxi lengths and oversized silhouettes effortlessly");
   }
 
-  if (bodyType === "hourglass") {
-    tips.push("Highlight your waist with fitted silhouettes or belts.");
+  /* ── STYLE PREFERENCE ── */
+  const style = (stylePreference || "").toLowerCase();
+
+  if (style === "minimal") {
+    stylingTips.push("Limit your palette to 2–3 neutral tones per outfit");
+    fabrics.push("Cotton", "Linen", "Jersey");
+  } else if (style === "trendy" || style === "streetwear") {
+    outfitItems.push("Oversized silhouette", "Statement sneakers");
+    accessories.push("Bucket hat / cap");
+    fabrics.push("Denim", "Nylon", "Fleece");
+  } else if (style === "classic") {
+    outfitItems.push("Crisp white shirt", "Tailored trousers");
+    fabrics.push("Cotton-blend", "Wool-blend", "Silk");
+    stylingTips.push("Quality over quantity — invest in timeless pieces");
+  } else if (style === "ethnic" || style.includes("trad")) {
+    fabrics.push("Silk", "Chiffon", "Handloom cotton");
+    stylingTips.push("Mix traditional weaves with contemporary cuts");
   }
 
-  // 3️⃣ Season rules
-  switch (season) {
-    case "summer":
-      fabrics.push("Cotton", "Linen");
-      colors.push("Soft pastels", "Light neutrals");
-      tips.push("Choose breathable fabrics for comfort.");
-      break;
+  /* ── FALLBACK FABRICS ── */
+  if (fabrics.length === 0) fabrics.push("Cotton", "Linen");
 
-    case "winter":
-      fabrics.push("Wool", "Cashmere", "Knits");
-      colors.push("Deep tones", "Rich neutrals");
-      tips.push("Layer outfits for warmth and structure.");
-      break;
-
-    case "monsoon":
-      fabrics.push("Quick-dry fabrics", "Poly blends");
-      tips.push("Avoid long hems and choose fast-drying fabrics.");
-      break;
-
-    default:
-      break;
-  }
-
-  // 4️⃣ Combined Occasion + Season Intelligence
-  if (occasion === "party" && season === "summer") {
-    fabrics.push("Chiffon", "Light silk");
-    tips.push("Choose breathable party fabrics for warm weather.");
-  }
-
-  if (occasion === "formal" && season === "winter") {
-    fabrics.push("Velvet", "Wool blends");
-    tips.push("Structured layers work well for winter formals.");
-  }
-
-  if (occasion === "ethnic" && season === "summer") {
-    fabrics.push("Cotton silk", "Light linen blends");
-    tips.push("Lightweight ethnic fabrics keep you comfortable.");
-  }
-
-  // 5️⃣ Height adjustments
-  if (height === "short") {
-    colors.push("Monochrome outfits");
-    tips.push("High-waist styling and pointed footwear elongate the frame.");
-  }
-
-  if (height === "tall") {
-    tips.push("Bold prints and layered styling complement tall frames.");
-  }
-
-  // 6️⃣ Style preference rules
-  if (stylePreference === "bold") {
-    colors.push("Complementary color combinations");
-    outfit.push("Statement outfit with bold patterns");
-    tips.push("Use one bold statement piece to anchor the outfit.");
-  }
-
-  if (stylePreference === "minimal") {
-    colors.push("Neutral palette (beige, black, white, earth tones)");
-    outfit.push("Clean monochrome outfit with tailored silhouette");
-    tips.push("Minimal styling works best with sharp silhouettes.");
-  }
-
-  if (stylePreference === "traditional") {
-    outfit.push("Classic heritage silhouette with modern styling");
-    tips.push("Traditional textures and accessories elevate the look.");
-  }
-
-  if (stylePreference === "trendy") {
-    outfit.push("Modern oversized layers with trending accessories");
-    tips.push("Combine trendy pieces with timeless basics.");
-  }
-
-  // 7️⃣ Skin tone color harmony
-  if (skinTone === "fair") {
-    colors.push("Emerald green", "Navy blue", "Soft rose");
-  }
-
-  if (skinTone === "medium") {
-    colors.push("Olive green", "Maroon", "Cobalt blue");
-  }
-
-  if (skinTone === "dusky") {
-    colors.push("Mustard", "Rust", "Deep teal");
-  }
-
-  if (skinTone === "dark") {
-    colors.push("Bright white", "Royal blue", "Deep jewel tones");
-  }
-
-  // 8️⃣ General styling tip
-  colors.push("Dark tones for a slimming visual effect");
+  /* ── OUTFIT IMAGES ── */
+  const outfitImages = getOutfitImages(input);
 
   return {
-    outfitRecommendation: unique(outfit),
+    outfitRecommendation: unique(outfitItems),
     accessorySuggestions: unique(accessories),
     recommendedColorPalette: unique(colors),
     suitableFabrics: unique(fabrics),
-    stylingTips: unique(tips),
-    heroImage,
+    stylingTips: unique(stylingTips),
+    outfitImages,
   };
 }
 

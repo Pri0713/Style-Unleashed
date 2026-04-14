@@ -1,307 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Style Profile | StyleAI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .page-header {
+      background: var(--maroon);
+      padding: 16px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-<meta charset="UTF-8">
-<title>StyleAI Questionnaire</title>
+    .page-header .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--beige);
+      font-weight: 700;
+    }
 
-<style>
+    .page-header .logo span { color: var(--orange); }
 
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#e9dfd3;
-color:#3b1f1f;
-}
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
 
-header{
-background:#7a1f2a;
-color:white;
-padding:18px 40px;
-font-size:22px;
-font-weight:bold;
-}
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--beige-dark);
+      transition: background 0.3s, transform 0.3s;
+    }
 
-.container{
-display:flex;
-justify-content:center;
-align-items:center;
-height:90vh;
-}
+    .step-dot.active {
+      background: var(--maroon);
+      transform: scale(1.3);
+    }
 
-.card{
-background:#f5eee6;
-padding:50px;
-border-radius:12px;
-width:550px;
-text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
+    .step-dot.done {
+      background: var(--orange);
+    }
 
-.question{
-font-size:24px;
-margin-bottom:40px;
-}
+    .q-section {
+      animation: fadeIn 0.4s ease;
+    }
 
-.options{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-.option{
-background:#7a1f2a;
-color:white;
-padding:14px;
-border-radius:6px;
-cursor:pointer;
-transition:0.2s;
-}
+    .q-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--maroon);
+      margin-bottom: 6px;
+    }
 
-.option:hover{
-background:#d37b2a;
-}
+    .q-hint {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 28px;
+    }
 
-.option.selected{
-background:#d37b2a;
-}
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
 
-.nav{
-margin-top:40px;
-display:flex;
-justify-content:space-between;
-}
+    .option-card {
+      border: 2px solid #e0d5c8;
+      border-radius: 14px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dark);
+      position: relative;
+    }
 
-.arrow{
-background:#7a1f2a;
-color:white;
-border:none;
-padding:12px 20px;
-font-size:20px;
-border-radius:6px;
-cursor:pointer;
-}
+    .option-card:hover {
+      border-color: var(--orange);
+      background: #fff8f2;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(217, 111, 50, 0.15);
+    }
 
-.arrow:hover{
-background:#d37b2a;
-}
+    .option-card.selected {
+      border-color: var(--maroon);
+      background: var(--maroon);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(122, 31, 43, 0.3);
+    }
 
-.progress{
-height:6px;
-background:#e0d5c6;
-margin-bottom:30px;
-border-radius:5px;
-overflow:hidden;
-}
+    .option-card .emoji {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 8px;
+    }
 
-.progress-bar{
-height:100%;
-background:#7a1f2a;
-width:0%;
-transition:0.3s;
-}
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
 
-</style>
+    .progress-text {
+      font-size: 13px;
+      color: #aaa;
+    }
 
+    .progress-bar-wrap {
+      height: 4px;
+      background: var(--beige-dark);
+      border-radius: 4px;
+      margin-bottom: 36px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--maroon), var(--orange));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .section-label {
+      display: inline-block;
+      background: rgba(122, 31, 43, 0.08);
+      color: var(--maroon);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* Returning user – occasion only */
+    .occasion-hero {
+      text-align: center;
+      padding: 20px 0 30px;
+    }
+
+    .occasion-hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      color: var(--maroon);
+      margin-bottom: 8px;
+    }
+
+    .occasion-hero p {
+      color: #888;
+      margin-bottom: 36px;
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
-StyleAI
+<header class="page-header">
+  <div class="logo">Style<span>AI</span></div>
+  <div class="nav-right">
+    <span class="nav-user" id="userName"></span>
+    <button class="nav-btn" onclick="logout()">Logout</button>
+  </div>
 </header>
 
 <div class="container">
+  <div class="card" id="mainCard" style="max-width:760px;margin:auto;">
 
-<div class="card">
+    <!-- FULL PROFILE FLOW (new users) -->
+    <div id="profileFlow">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+      </div>
+      <div id="stepContent"></div>
+    </div>
 
-<div class="progress">
-<div class="progress-bar" id="progressBar"></div>
-</div>
+    <!-- RETURNING USER – occasion only -->
+    <div id="returningFlow" class="hidden">
+      <div class="occasion-hero">
+        <h2 id="welcomeBack">Welcome back!</h2>
+        <p>What's the occasion today? We'll style you in seconds.</p>
+      </div>
+      <div class="q-title" style="font-size:18px;margin-bottom:20px;">Choose your occasion</div>
+      <div class="options-grid" id="occasionGrid"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn-primary" onclick="submitOccasion()">Get My Look →</button>
+      </div>
+    </div>
 
-<div class="question" id="questionText"></div>
-
-<div class="options" id="optionsContainer"></div>
-
-<div class="nav">
-
-<button class="arrow" id="prevBtn">←</button>
-<button class="arrow" id="nextBtn">→</button>
-
-</div>
-
-</div>
-
+  </div>
 </div>
 
 <script>
+  const STEPS = [
+    {
+      key: 'gender',
+      label: 'About You',
+      title: 'What is your gender?',
+      hint: 'We use this to suggest the most relevant outfit styles.',
+      options: [
+        { value: 'Male', label: 'Male', emoji: '👔' },
+        { value: 'Female', label: 'Female', emoji: '👗' }
+      ]
+    },
+    {
+      key: 'bodyType',
+      label: 'Body Shape',
+      title: 'What is your body type?',
+      hint: 'This helps us recommend silhouettes that flatter your shape.',
+      options: [
+        { value: 'Rectangle', label: 'Rectangle', emoji: '▬' },
+        { value: 'Pear', label: 'Pear', emoji: '🍐' },
+        { value: 'Apple', label: 'Apple', emoji: '🍎' },
+        { value: 'Hourglass', label: 'Hourglass', emoji: '⧗' },
+        { value: 'Oval', label: 'Oval', emoji: '⬭' },
+        { value: 'Trapezoid', label: 'Trapezoid', emoji: '⏢' }
+      ]
+    },
+      {
+    key: 'skinTone',
+    label: 'Skin Tone',
+    title: 'What is your skin tone?',
+    hint: 'We\'ll suggest colours that complement your complexion beautifully.',
+    options: [
+      { value: 'Fair', label: 'Fair', emoji: '🌸' },
+      { value: 'Dusky', label: 'Dusky', emoji: '🌾' },
+      { value: 'Dark', label: 'Dark', emoji: '🌑' }
+    ]
+  },
+    {
+      key: 'height',
+      label: 'Height',
+      title: 'What is your height range?',
+      hint: 'Proportions matter — we\'ll style you accordingly.',
+      options: [
+        { value: 'Short', label: 'Short', emoji: '🔽' },
+        { value: 'Average', label: 'Average', emoji: '↕️' },
+        { value: 'Tall', label: 'Tall', emoji: '🔼' }
+      ]
+    },
+      {
+    key: 'stylePreference',
+    label: 'Style Vibe',
+    title: 'What\'s your style preference?',
+    hint: 'Pick the aesthetic that feels most like you.',
+    options: [
+      { value: 'Minimal', label: 'Minimal', emoji: '◻️' },
+      { value: 'Trendy', label: 'Trendy', emoji: '✨' },
+      { value: 'Traditional', label: 'Traditional', emoji: '🪔' }
+    ]
+  },
+      {
+    key: 'occasion',
+    label: 'Today\'s Occasion',
+    title: 'What\'s the occasion?',
+    hint: 'We\'ll build your outfit recommendation around this.',
+    options: [
+      { value: 'Casual', label: 'Casual', emoji: '☕' },
+      { value: 'Formal', label: 'Formal', emoji: '💼' },
+      { value: 'Party', label: 'Party', emoji: '🎉' }
+    ]
+  }
+  ];
 
-const questions = [
+  const OCCASION_OPTIONS = STEPS[5].options;
 
-{
-id:"gender",
-text:"What is your gender?",
-options:["female","male"]
-},
+  let currentStep = 0;
+  let answers = {};
+  let isReturning = false;
 
-{
-id:"bodyType",
-text:"What is your body type?",
-options:["rectangle","pear","apple","hourglass","oval","trapezoid"]
-},
+  async function init() {
+    const me = await fetch('/api/auth/me').then(r => r.json());
+    if (!me.authenticated) { window.location.href = 'auth.html'; return; }
 
-{
-id:"skinTone",
-text:"What is your skin tone?",
-options:["fair","medium","dusky","dark"]
-},
+    if (me.user && me.user.name) {
+      document.getElementById('userName').textContent = me.user.name;
+    }
 
-{
-id:"height",
-text:"What is your height category?",
-options:["short","average","tall"]
-},
+    if (me.hasProfile) {
+      isReturning = true;
+      document.getElementById('profileFlow').classList.add('hidden');
+      document.getElementById('returningFlow').classList.remove('hidden');
 
-{
-id:"stylePreference",
-text:"What style do you prefer?",
-options:["minimal","bold","traditional","trendy"]
-},
+      const welcomeEl = document.getElementById('welcomeBack');
+      if (me.user && me.user.name) {
+        welcomeEl.textContent = `Welcome back, ${me.user.name.split(' ')[0]}!`;
+      }
 
-{
-id:"occasion",
-text:"What is the occasion?",
-options:["casual","formal","ethnic","party"]
-},
+      buildOccasionGrid();
+    } else {
+      renderStep();
+    }
+  }
 
-{
-id:"season",
-text:"What season is it?",
-options:["summer","winter","monsoon","festive"]
-}
+  function buildOccasionGrid() {
+    const grid = document.getElementById('occasionGrid');
+    grid.innerHTML = '';
+    OCCASION_OPTIONS.forEach(opt => {
+      const card = document.createElement('div');
+      card.className = 'option-card';
+      card.innerHTML = `<span class="emoji">${opt.emoji}</span>${opt.label}`;
+      card.onclick = () => {
+        grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        answers.occasion = opt.value;
+      };
+      grid.appendChild(card);
+    });
+  }
 
-]
+  async function submitOccasion() {
+    if (!answers.occasion) return alert('Please choose an occasion');
+    await getRecommendation();
+  }
 
-let currentQuestion = 0
-const answers = {}
+  function renderStep() {
+    const step = STEPS[currentStep];
+    const progress = ((currentStep) / STEPS.length) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
 
-const questionText = document.getElementById("questionText")
-const optionsContainer = document.getElementById("optionsContainer")
-const progressBar = document.getElementById("progressBar")
+    const container = document.getElementById('stepContent');
+    container.innerHTML = `
+      <div class="q-section">
+        <div class="section-label">${step.label} · ${currentStep + 1} of ${STEPS.length}</div>
+        <div class="q-title">${step.title}</div>
+        <div class="q-hint">${step.hint}</div>
+        <div class="options-grid" id="optGrid"></div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="prevStep()" ${currentStep === 0 ? 'style="visibility:hidden"' : ''}>← Back</button>
+          <span class="progress-text">${currentStep + 1} / ${STEPS.length}</span>
+          <button class="btn-primary" onclick="nextStep()">
+            ${currentStep === STEPS.length - 1 ? 'Get My Look →' : 'Next →'}
+          </button>
+        </div>
+      </div>
+    `;
 
-function renderQuestion(){
+    const grid = document.getElementById('optGrid');
+    step.options.forEach(opt => {
+      const card = document.createElement('div');
+      card.className = 'option-card' + (answers[step.key] === opt.value ? ' selected' : '');
+      card.innerHTML = `<span class="emoji">${opt.emoji}</span>${opt.label}`;
+      card.onclick = () => {
+        grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        answers[step.key] = opt.value;
+      };
+      grid.appendChild(card);
+    });
+  }
 
-const q = questions[currentQuestion]
+  function prevStep() {
+    if (currentStep > 0) { currentStep--; renderStep(); }
+  }
 
-questionText.textContent = q.text
+  async function nextStep() {
+    const key = STEPS[currentStep].key;
+    if (!answers[key]) return alert('Please make a selection to continue');
 
-optionsContainer.innerHTML=""
+    if (currentStep < STEPS.length - 1) {
+      currentStep++;
+      renderStep();
+    } else {
+      // Last step: save profile (all except occasion) then get recommendation
+      const profileData = {
+        gender: answers.gender,
+        bodyType: answers.bodyType,
+        skinTone: answers.skinTone,
+        height: answers.height,
+        stylePreference: answers.stylePreference
+      };
 
-q.options.forEach(option=>{
+      const saveRes = await fetch('/api/preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData)
+      });
 
-const div = document.createElement("div")
-div.className="option"
-div.textContent=option
+      if (!saveRes.ok) return alert('Failed to save profile. Please try again.');
+      await getRecommendation();
+    }
+  }
 
-if(answers[q.id]===option){
-div.classList.add("selected")
-}
+  async function getRecommendation() {
+    document.getElementById('mainCard').innerHTML = `
+      <div style="text-align:center;padding:60px 20px;">
+        <div style="font-size:48px;margin-bottom:16px;">✨</div>
+        <h3 style="font-family:'Playfair Display',serif;color:var(--maroon);font-size:24px;margin-bottom:8px;">Styling your look…</h3>
+        <p style="color:#888;">Hang tight while we build your personalised outfit</p>
+      </div>
+    `;
 
-div.onclick=()=>{
+    try {
+      const res = await fetch('/api/recommendations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ occasion: answers.occasion })
+      });
+      const data = await res.json();
 
-answers[q.id]=option
+      if (!res.ok) throw new Error(data.error);
 
-document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"))
+      sessionStorage.setItem('latestRecommendation', JSON.stringify(data.recommendation));
+      window.location.href = 'recommendation.html';
+    } catch (err) {
+      alert('Could not generate recommendation. Please try again.');
+      window.location.reload();
+    }
+  }
 
-div.classList.add("selected")
+  function logout() {
+    fetch('/api/auth/logout', { method: 'POST' }).then(() => {
+      window.location.href = 'auth.html';
+    });
+  }
 
-}
-
-optionsContainer.appendChild(div)
-
-})
-
-progressBar.style.width=((currentQuestion+1)/questions.length*100)+"%"
-
-}
-
-document.getElementById("nextBtn").onclick=async ()=>{
-
-const q = questions[currentQuestion]
-
-if(!answers[q.id]){
-alert("Please select an option")
-return
-}
-
-if(currentQuestion < questions.length-1){
-
-currentQuestion++
-renderQuestion()
-
-}else{
-
-await submitAnswers()
-
-}
-
-}
-
-document.getElementById("prevBtn").onclick=()=>{
-
-if(currentQuestion>0){
-
-currentQuestion--
-renderQuestion()
-
-}
-
-}
-
-async function submitAnswers(){
-
-await fetch("/api/preferences",{
-
-method:"PUT",
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-
-gender:answers.gender,
-bodyType:answers.bodyType,
-skinTone:answers.skinTone,
-height:answers.height,
-stylePreference:answers.stylePreference
-
-})
-
-})
-
-const res = await fetch("/api/recommendations",{
-
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-
-occasion:answers.occasion,
-season:answers.season
-
-})
-
-})
-
-const data = await res.json()
-
-localStorage.setItem("recommendation",JSON.stringify(data.recommendation))
-
-window.location.href="recommendation.html"
-
-}
-
-renderQuestion()
-
+  init();
 </script>
-
 </body>
 </html>

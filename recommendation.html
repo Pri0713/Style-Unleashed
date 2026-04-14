@@ -1,126 +1,228 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <title>Outfit Recommendation</title>
 
-<title>Your Outfit Recommendation</title>
+  <style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f7f5f2;
+    margin: 0;
+    padding: 30px;
+  }
 
-<link rel="stylesheet" href="theme.css">
+  h1 {
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    color: #7a1f2b;
+    margin-bottom: 25px;
+  }
 
-<style>
+  select, button {
+    padding: 10px 14px;
+    margin: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
 
-.hero{
-text-align:center;
-margin-bottom:30px;
-}
+  select {
+    border: 1px solid #ddd;
+  }
 
-.hero img{
-width:320px;
-border-radius:10px;
-}
+  button {
+    background: #7a1f2b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
-}
+  button:hover {
+    background: #d96f32;
+  }
 
-.rec-card{
-background:white;
-padding:20px;
-border-radius:8px;
-text-align:center;
-box-shadow:0 4px 12px rgba(0,0,0,0.07);
-}
+  .container {
+    max-width: 950px;
+    margin: auto;
+    text-align: center;
+  }
 
-.rec-card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:6px;
-margin-bottom:10px;
-}
+  /* RESULT CARD */
+  .result-box {
+    background: white;
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    display: none;
+  }
 
+  /* IMAGE GRID */
+  .image-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 25px;
+  }
+
+  .card {
+    width: 240px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    transition: transform 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+  }
+
+  .card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .card p {
+    margin: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+
+  /* DETAILS GRID */
+  .info {
+    display: grid;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .info p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .label {
+    font-weight: bold;
+    color: #7a1f2b;
+  }
+
+  /* Highlight Styling Tips */
+  #tips {
+    display: block;
+  }
+
+  .info p:last-child {
+    background: linear-gradient(135deg, #fff3e8, #ffe0cc);
+    border-left: 4px solid #d96f32;
+  }
 </style>
-
 </head>
 
 <body>
 
-<div class="navbar">
+  <div class="container">
 
-<div class="logo">StyleAI</div>
+    <h1>Outfit Recommendation</h1>
 
-<a class="nav-btn" href="questionnaire.html">New Recommendation</a>
+  <div style="margin-bottom:20px;">
+  <select id="occasion">
+    <option value="casual">Casual</option>
+    <option value="formal">Formal</option>
+    <option value="party">Party</option>
+  </select>
 
+  <button onclick="generateRecommendation()">Generate Recommendation</button>
 </div>
 
-<div class="container">
+    <!-- RESULT -->
+    <div class="result-box" id="resultBox">
 
-<div class="hero">
+      <!-- IMAGES -->
+      <div class="image-grid">
+        <div class="card">
+          <img id="img1" src="" alt="Outfit 1">
+          <p>Outfit 1</p>
+        </div>
 
-<h2>Your Personalized Look</h2>
+        <div class="card">
+          <img id="img2" src="" alt="Outfit 2">
+          <p>Outfit 2</p>
+        </div>
+      </div>
 
-<img id="heroImage">
+      <!-- DETAILS -->
+      <div class="info">
+        <p><span class="label">Outfit:</span> <span id="outfit"></span></p>
+        <p><span class="label">Accessories:</span> <span id="accessories"></span></p>
+        <p><span class="label">Colors:</span> <span id="colors"></span></p>
+        <p><span class="label">Fabrics:</span> <span id="fabrics"></span></p>
+        <p><span class="label">Styling Tips:</span> <span id="tips"></span></p>
+      </div>
 
-</div>
+    </div>
 
-<div class="grid">
+  </div>
 
-<div class="rec-card">
+  <script>
+    async function generateRecommendation() {
+      const occasion = document.getElementById("occasion").value;
 
-<img src="https://images.unsplash.com/photo-1520975922284-6c2b92c4a8b3">
-<p>Recommended Outfit</p>
+      try {
+        const res = await fetch("/api/recommendations", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ occasion })
+        });
 
-</div>
+        const data = await res.json();
 
-<div class="rec-card">
+        if (!data.recommendation) {
+          alert("Failed to get recommendation");
+          return;
+        }
 
-<img src="https://images.unsplash.com/photo-1526178613658-3f1622045557">
-<p>Accessories</p>
+        const r = data.recommendation;
 
-</div>
+        // SHOW BOX
+        document.getElementById("resultBox").style.display = "block";
 
-<div class="rec-card">
+        // TEXT
+        document.getElementById("outfit").innerText =
+          r.outfitRecommendation.join(", ");
 
-<img src="https://images.unsplash.com/photo-1520974735194-1c7e78d5bb8d">
-<p>Color Palette</p>
+        document.getElementById("accessories").innerText =
+          r.accessorySuggestions.join(", ");
 
-</div>
+        document.getElementById("colors").innerText =
+          r.recommendedColorPalette.join(", ");
 
-<div class="rec-card">
+        document.getElementById("fabrics").innerText =
+          r.suitableFabrics.join(", ");
 
-<img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
-<p>Fabric Suggestions</p>
+        document.getElementById("tips").innerText =
+          r.stylingTips.join(" | ");
 
-</div>
+        // IMAGES (IMPORTANT FIX)
+        if (r.outfitImages && r.outfitImages.length >= 2) {
+          document.getElementById("img1").src = "/" + r.outfitImages[0];
+          document.getElementById("img2").src = "/" + r.outfitImages[1];
+        }
 
-<div class="rec-card">
-
-<img src="https://images.unsplash.com/photo-1519741497674-611481863552">
-<p>Styling Tip</p>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="recommendation.js"></script>
-
-<script>
-
-fetch("/api/recommendations/history")
-.then(res=>res.json())
-.then(data=>{
-
-const hero=data.history[0].recommendation.heroImage
-
-document.getElementById("heroImage").src=hero
-
-})
-
-</script>
+      } catch (err) {
+        console.error(err);
+        alert("Error occurred. Check console.");
+      }
+    }
+  </script>
 
 </body>
 </html>
+```
